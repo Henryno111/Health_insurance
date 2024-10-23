@@ -12,3 +12,21 @@
 ;; Data Variables
 (define-data-var insurance-plans-counter uint u0)
 (define-data-var claims-counter uint u1)
+
+;; Define an insurance plan for a user
+(define-map insurance-plans principal { coverage-amount: uint, is-active: bool })
+(define-map claims uint { patient: principal, claim-amount: uint, approved: bool })
+
+;; Define an insurance plan for a user
+(define-public (register-insurance (coverage-amount uint))
+  (begin
+    ;; Check for a valid coverage amount (non-zero)
+    (if (<= coverage-amount u0)
+      ERR_INVALID_COVERAGE
+      (begin
+        (map-set insurance-plans tx-sender { coverage-amount: coverage-amount, is-active: true })
+        (ok "Insurance registered successfully")
+      )
+    )
+  )
+)
