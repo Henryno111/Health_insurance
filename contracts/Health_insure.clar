@@ -81,3 +81,11 @@
     )
   )
 )
+
+;; Get claim details
+(define-read-only (get-claim (claim-id uint))
+  (match (map-get? claims claim-id)
+    claim-data (ok claim-data)
+    ERR_CLAIM_NOT_FOUND
+  )
+)
