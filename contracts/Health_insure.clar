@@ -30,3 +30,11 @@
     )
   )
 )
+
+;; Verify if a user's insurance is active and their coverage amount
+(define-read-only (get-insurance-status (user principal))
+  (match (map-get? insurance-plans user)
+    insurance-data (ok insurance-data)
+    ERR_INSURANCE_NOT_FOUND
+  )
+)
