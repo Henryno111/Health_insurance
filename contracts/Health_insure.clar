@@ -58,3 +58,26 @@
     )
   )
 )
+
+;; Approve a claim by claim ID (only callable by the insurer)
+(define-public (approve-claim (claim-id uint))
+  (begin
+    ;; Check for a valid claim ID (non-zero)
+    (if (<= claim-id u0)
+      ERR_INVALID_CLAIM_ID
+      (let ((claim-data (map-get? claims claim-id)))
+        (match claim-data
+          claim-details
+          (if (is-eq (get patient claim-details) tx-sender)
+            ERR_SELF_APPROVE
+            (begin
+              (map-set claims claim-id { patient: (get patient claim-details), claim-amount: (get claim-amount claim-details), approved: true })
+              (ok "Claim approved")
+            )
+          )
+          ERR_CLAIM_NOT_FOUND
+        )
+      )
+    )
+  )
+)
