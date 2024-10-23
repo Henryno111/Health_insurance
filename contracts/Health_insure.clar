@@ -38,3 +38,23 @@
     ERR_INSURANCE_NOT_FOUND
   )
 )
+
+;; Submit a claim for a user
+(define-public (submit-claim (claim-amount uint))
+  (begin
+    (let ((insurance-data (map-get? insurance-plans tx-sender)))
+      (match insurance-data
+        insurance-details
+        (if (and (is-eq (get is-active insurance-details) true) (<= claim-amount (get coverage-amount insurance-details)))
+          (let ((claim-id (var-get claims-counter)))
+            (map-set claims claim-id { patient: tx-sender, claim-amount: claim-amount, approved: false })
+            (var-set claims-counter (+ claim-id u1))
+            (ok (tuple (claim-id claim-id) (status "Claim submitted")))
+          )
+          ERR_CLAIM_EXCEEDS_COVERAGE
+        )
+        ERR_INSURANCE_NOT_FOUND
+      )
+    )
+  )
+)
